@@ -15,15 +15,15 @@ class WeatherWidget extends Component {
   }
 
   componentDidMount() {
-    if (this.props.location){
-      this.setState({locationName: this.props.location})
+    if (this.props.location) {
+      this.setState({ locationName: this.props.location })
     }
 
     return fetch('https://api.darksky.net/forecast/' + this.props.api + '/' + this.props.lat + ',' + this.props.lng).then((response) => response.json()).then((responseJson) => {
-      this.setState({summary: responseJson.currently.summary, temp: (Math.round(10 * responseJson.currently.temperature)/10) + '°F', icon: responseJson.currently.icon, precipChance: Math.round(responseJson.currently.precipProbability * 1000)/10, isLoading: false});
+      this.setState({ summary: responseJson.currently.summary, temp: (Math.round(10 * responseJson.currently.temperature) / 10) + '°F', icon: responseJson.currently.icon, precipChance: Math.round(responseJson.currently.precipProbability * 1000) / 10, isLoading: false });
     }).catch((error) => {
       console.error(error);
-      this.setState({isLoading: false});
+      this.setState({ isLoading: false });
     });
   }
 
@@ -31,7 +31,7 @@ class WeatherWidget extends Component {
     if (this.state.isLoading) {
       return (
         <View style={styles.spinner}>
-          <ActivityIndicator size={'small'}/>
+          <ActivityIndicator size={'small'} />
         </View>
       )
     }
@@ -54,28 +54,35 @@ class WeatherWidget extends Component {
       'default': require('./weather-icons/default.png')
     }
 
-    function getIcon(icon){
+    function getIcon(icon) {
       return icons[icon];
     }
 
     return (
+      <View style={[styles.summaryContainer, (this.state.summary.length >= 20) && styles.summaryContainerLong, { justifyContent: 'center'}]}>
+        <Image style={styles.icon} source={getIcon(this.state.icon)} />
+        <Text style={[styles.summary, { marginLeft: 10 }]}>{this.state.summary}</Text>
+      </View>
+    )
+
+    return (
       <View style={styles.container}>
-            <View style={styles.titleContainer}>
-              <Text style={[styles.title, (this.props.location && this.props.location.length <= 13) && styles.customTitle]}>{this.state.locationName}</Text>
-            </View>
-            <View style={[styles.summaryContainer, (this.state.summary.length >= 20) && styles.summaryContainerLong]}>
-              <Text style={styles.summary}>{this.state.summary}</Text>
-              <Image style={styles.icon} source={ getIcon(this.state.icon) } />
-            </View>
-            <View style={styles.tempContainer}>
-              <Text>{this.state.temp}</Text>
-              <View style={{flexDirection: 'row'}}>
-              <Text>
-                {this.state.precipChance}%
+        <View style={styles.titleContainer}>
+          <Text style={[styles.title, (this.props.location && this.props.location.length <= 13) && styles.customTitle]}>{this.state.locationName}</Text>
+        </View>
+        <View style={[styles.summaryContainer, (this.state.summary.length >= 20) && styles.summaryContainerLong]}>
+          <Text style={styles.summary}>{this.state.summary}</Text>
+          <Image style={styles.icon} source={getIcon(this.state.icon)} />
+        </View>
+        <View style={styles.tempContainer}>
+          <Text>{this.state.temp}</Text>
+          <View style={{ flexDirection: 'row' }}>
+            <Text>
+              {this.state.precipChance}%
               </Text>
-              <Image style={styles.precipImage} source={require('./weather-icons/precip.png')} />
-              </View>
-            </View>
+            <Image style={styles.precipImage} source={require('./weather-icons/precip.png')} />
+          </View>
+        </View>
       </View>
     )
   }
@@ -92,12 +99,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#8294a0',
   },
-  titleContainer:{
+  titleContainer: {
     flex: 1,
     borderRightWidth: 1,
     borderRightColor: '#8294a0'
   },
-  title:{
+  title: {
     marginTop: 5,
     marginBottom: 5,
     marginRight: 5,
@@ -105,7 +112,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     textAlign: 'right'
   },
-  customTitle:{
+  customTitle: {
     marginTop: 13,
     marginBottom: 13,
     marginRight: 5,
